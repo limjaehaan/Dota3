@@ -10,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-# CSS for styling
+# CSS for styling (same as before)
 st.markdown("""
     <style>
     .info-box {
@@ -43,7 +43,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Predefined fields
+# Predefined fields (unchanged)
 predefined_fields = {
     "Customer Name": None,
     "Date": None,
@@ -51,10 +51,10 @@ predefined_fields = {
     "Sales": None
 }
 
-# Title of the app
+# Title of the app (unchanged)
 st.title("Understand Your Business Data")
 
-# Notification message about required and optional fields
+# Notification message about required and optional fields (unchanged)
 st.markdown("""
 <div class="info-box">
 **Before uploading your CSV file, please ensure it contains the following columns:**
@@ -65,21 +65,26 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Step 1: Upload CSV file
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+# Step 1: Upload CSV file or select sample CSV
+file_option = st.radio("Choose data source:", ('Upload CSV file', 'Use Sample CSV - Alteryx Data'))
 
-# Options for aggregation basis dropdown
-aggregation_options = ['Daily', 'Weekly', 'Monthly', 'Quarterly']
+if file_option == 'Upload CSV file':
+    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+    if uploaded_file:
+        df = pd.read_csv(uploaded_file)
+else:
+    # Load the sample CSV file (you should adjust this path to your actual sample file)
+    sample_file_path = "Data/SampleInput.csv"
+    df = pd.read_csv(sample_file_path)
 
-if uploaded_file:
-    # Read the CSV file
-    df = pd.read_csv(uploaded_file)
+# Continue processing if dataframe is loaded
+if 'df' in locals():
     st.write("Data Preview:")
     st.write(df.head())
 
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-    # Step 2: Manual Mapping
+    # Step 2: Manual Mapping (unchanged)
     st.markdown('<div class="section-header">Map Columns to Predefined Fields</div>', unsafe_allow_html=True)
     st.markdown('<div class="mapping-container">', unsafe_allow_html=True)
     for field in predefined_fields.keys():
@@ -89,8 +94,9 @@ if uploaded_file:
 
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-    # Ensure necessary fields are mapped
+    # Ensure necessary fields are mapped (unchanged)
     if predefined_fields["Customer Name"] and predefined_fields["Date"] and predefined_fields["Sales"]:
+        
         # Step 3: Data Processing
         df_mapped = df.rename(columns={
             predefined_fields["Customer Name"]: "Customer Name",
@@ -204,8 +210,6 @@ if uploaded_file:
 
     else:
         st.write("Please map 'Customer Name', 'Date', and 'Sales' fields to proceed.")
-
-
 
 
 
