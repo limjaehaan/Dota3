@@ -10,7 +10,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-# CSS for styling (same as before)
+# Define aggregation options
+aggregation_options = ['Weekly', 'Monthly', 'Quarterly', 'Yearly']
+
+# CSS styling (unchanged)
 st.markdown("""
     <style>
     .info-box {
@@ -43,7 +46,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Predefined fields (unchanged)
+# Predefined fields and title (unchanged)
 predefined_fields = {
     "Customer Name": None,
     "Date": None,
@@ -51,7 +54,6 @@ predefined_fields = {
     "Sales": None
 }
 
-# Title of the app (unchanged)
 st.title("Understand Your Business Data")
 
 # Notification message about required and optional fields (unchanged)
@@ -65,7 +67,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Step 1: Upload CSV file or select sample CSV
+# File handling logic (unchanged)
 file_option = st.radio("Choose data source:", ('Upload CSV file', 'Use Sample CSV - Alteryx Data'))
 
 if file_option == 'Upload CSV file':
@@ -73,18 +75,17 @@ if file_option == 'Upload CSV file':
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
 else:
-    # Load the sample CSV file (you should adjust this path to your actual sample file)
     sample_file_path = "Data/SampleInput.csv"
     df = pd.read_csv(sample_file_path)
 
-# Continue processing if dataframe is loaded
+# Continue processing if dataframe is loaded (unchanged)
 if 'df' in locals():
     st.write("Data Preview:")
     st.write(df.head())
 
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-    # Step 2: Manual Mapping (unchanged)
+    # Manual Mapping (unchanged)
     st.markdown('<div class="section-header">Map Columns to Predefined Fields</div>', unsafe_allow_html=True)
     st.markdown('<div class="mapping-container">', unsafe_allow_html=True)
     for field in predefined_fields.keys():
@@ -97,7 +98,7 @@ if 'df' in locals():
     # Ensure necessary fields are mapped (unchanged)
     if predefined_fields["Customer Name"] and predefined_fields["Date"] and predefined_fields["Sales"]:
         
-        # Step 3: Data Processing
+        # Data Processing (unchanged)
         df_mapped = df.rename(columns={
             predefined_fields["Customer Name"]: "Customer Name",
             predefined_fields["Date"]: "Date",
@@ -105,15 +106,12 @@ if 'df' in locals():
             predefined_fields["Sales"]: "Sales"
         })
 
-        # Drop 'Ignore' column if 'Quantity' is not mapped
         if "Ignore" in df_mapped.columns:
             df_mapped = df_mapped.drop(columns=["Ignore"])
 
-        # Ensure 'Date' column is of datetime type
         df_mapped["Date"] = pd.to_datetime(df_mapped["Date"], errors='coerce')
         df_mapped = df_mapped.dropna(subset=["Date"])
 
-        # Step 4: Date Range Selection
         min_date = df_mapped["Date"].min()
         max_date = df_mapped["Date"].max()
         st.markdown('<div class="section-header">Select Date Range</div>', unsafe_allow_html=True)
@@ -132,23 +130,20 @@ if 'df' in locals():
             max_value=max_date
         )
 
-        # Ensure start_date is before end_date
         if start_date > end_date:
             st.error("Error: End date must fall after start date.")
         else:
-            # Filter data based on selected date range
+            # Filter based on date range
             df_filtered = df_mapped[(df_mapped["Date"] >= pd.to_datetime(start_date)) & (df_mapped["Date"] <= pd.to_datetime(end_date))]
 
             st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-            # Step 5: Aggregation Level Selection
+            # Aggregation Level Selection
             st.markdown('<div class="section-header">Select Aggregation Basis</div>', unsafe_allow_html=True)
             aggregation_basis = st.selectbox("Select aggregation basis", aggregation_options)
 
-            if aggregation_basis == 'Daily':
-                df_agg = df_filtered.groupby(df_filtered['Date'].dt.date).sum().reset_index()
-                date_label = "Daily"
-            elif aggregation_basis == 'Weekly':
+
+            if aggregation_basis == 'Weekly':
                 df_agg = df_filtered.resample('W-Mon', on='Date').sum().reset_index()
                 date_label = "Weekly"
             elif aggregation_basis == 'Monthly':
@@ -161,14 +156,12 @@ if 'df' in locals():
                 df_agg = df_filtered.resample('Y', on='Date').sum().reset_index()
                 date_label = "Yearly"
 
-            # Convert to numpy arrays for plotting
             dates = df_agg["Date"]
             sales = df_agg["Sales"]
 
             st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-            # Step 6: Visualization
-            # Plotting Sales over time
+            # Visualization (unchanged)
             st.write(f"### {date_label} Sales Over Time")
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(dates, sales, marker='o', linestyle='-', color='#007acc', linewidth=2, markersize=8, label='Sales')
@@ -182,7 +175,6 @@ if 'df' in locals():
             plt.tight_layout()
             st.pyplot(fig)
 
-            # Plotting Quantity over time if 'Quantity' is mapped
             if "Quantity" in df_agg.columns:
                 quantity = df_agg["Quantity"]
                 st.write(f"### {date_label} Quantity Sold Over Time")
@@ -200,7 +192,7 @@ if 'df' in locals():
 
             st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-            # Step 7: Display Top Customers by Sales
+            # Top Customers by Sales
             st.write("### Top Customers by Sales")
             top_options = [5, 10, 20, 30]
             top_n = st.selectbox("Select number of top customers to display", top_options, index=1, key="top_customers")
@@ -210,6 +202,7 @@ if 'df' in locals():
 
     else:
         st.write("Please map 'Customer Name', 'Date', and 'Sales' fields to proceed.")
+
 
 
 
