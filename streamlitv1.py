@@ -59,11 +59,11 @@ st.title("Understand Your Business Data")
 # Notification message about required and optional fields (unchanged)
 st.markdown("""
 <div class="info-box">
-**Before uploading your CSV file, please ensure it contains the following columns:**
-- **Customer Name** (Required)
-- **Date** (Required)
-- **Sales** (Required)
-- **Quantity** (Optional)
+Before uploading your CSV file, please ensure it contains the following columns:
+Customer Name (Required),
+Date (Required),
+Sales (Required),
+Quantity (Optional)
 </div>
 """, unsafe_allow_html=True)
 
