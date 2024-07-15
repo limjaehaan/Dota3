@@ -72,12 +72,16 @@ predefined_fields = {
     "Sales": None
 }
 
+# Dashboard Title
 st.title("Understand Your Business Data")
+#  Get rid of top default padding
+st.markdown('<style>div.block-container{padding-top:1rem;}</style>',unsafe_allow_html=True)
 
 # File handling logic (unchanged)
-left, middle, right = st.columns([2, 0.4, 2])  # Adding a middle empty column for spacing
+left, middle, right = st.columns([2, 0.2, 2])  # Adding a middle empty column for spacing
 
-with left:
+# Add the provided section to st.sidebar:
+with st.sidebar:
     file_option = st.radio("Choose Data Source:", ('Upload CSV file', 'Use Sample Transaction Data'))
 
     if file_option == 'Upload CSV file':
@@ -85,7 +89,7 @@ with left:
         if uploaded_file:
             df = pd.read_csv(uploaded_file)
     else:
-        sample_file_path = "Data/SampleInput.csv"
+        sample_file_path = "Data/SampleInput.csv"  # Adjust the path as per your file location
         df = pd.read_csv(sample_file_path)
 
     if 'df' in locals():
@@ -152,7 +156,7 @@ with left:
 
                 st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-with right:
+with left:
     if 'df_filtered' in locals():
         # Aggregation Level Selection
         st.markdown('<div class="section-header">Select Aggregation Basis</div>', unsafe_allow_html=True)
@@ -219,8 +223,11 @@ with right:
 
         st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
+
+with right:
+    if 'df_filtered' in locals():
         # Top Customers by Sales
-        st.write("### Top Customers by Sales")
+        st.markdown(f'<div class="section-header">Top Customers by Sales', unsafe_allow_html=True)
         top_options = [5, 10, 20, 30]
         top_n = st.selectbox("Select number of top customers to display", top_options, index=1, key="top_customers")
         top_customers = df_filtered.groupby("Customer Name")["Sales"].sum().sort_values(ascending=False).head(top_n).reset_index()
@@ -228,7 +235,18 @@ with right:
         st.table(top_customers)
     else:
         st.write("Please map 'Customer Name', 'Date', and 'Sales' fields to proceed.")
-
+        
+        
+    if 'df_filtered' in locals():
+        # Top Product by Sales
+        st.markdown(f'<div class="section-header">Top Products by Sales', unsafe_allow_html=True)
+        top_options = [5, 10, 20, 30]
+        top_n = st.selectbox("Select number of top prodcuts to display", top_options, index=1, key="top_products")
+        top_customers = df_filtered.groupby("Product Name")["Sales"].sum().sort_values(ascending=False).head(top_n).reset_index()
+        st.write(f"Top {top_n} Products:")
+        st.table(top_customers)
+    else:
+        st.write("Please map 'Product Name', 'Date', and 'Sales' fields to proceed.")
 
 
 
