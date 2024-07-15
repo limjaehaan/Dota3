@@ -234,7 +234,8 @@ with right:
         st.write(f"Top {top_n} Customers:")
         st.table(top_customers)
     else:
-        st.write("Please map 'Customer Name', 'Date', and 'Sales' fields to proceed.")
+        nothing
+        # st.write("Please map 'Customer Name', 'Date', and 'Sales' fields to proceed.")
         
         
     if 'df_filtered' in locals():
@@ -246,7 +247,8 @@ with right:
         st.write(f"Top {top_n} Products:")
         st.table(top_customers)
     else:
-        st.write("Please map 'Product Name', 'Date', and 'Sales' fields to proceed.")
+        nothing
+        # st.write("Please map 'Product Name', 'Date', and 'Sales' fields to proceed.")
 
 
 
