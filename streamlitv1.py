@@ -234,7 +234,7 @@ with right:
         st.write(f"Top {top_n} Customers:")
         st.table(top_customers)
     else:
-        nothing
+        pass
         # st.write("Please map 'Customer Name', 'Date', and 'Sales' fields to proceed.")
         
         
@@ -247,7 +247,7 @@ with right:
         st.write(f"Top {top_n} Products:")
         st.table(top_customers)
     else:
-        nothing
+        pass
         # st.write("Please map 'Product Name', 'Date', and 'Sales' fields to proceed.")
 
 
